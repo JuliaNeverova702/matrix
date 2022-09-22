@@ -8,6 +8,8 @@ int main() {
     s21_create_matrix(2, 2, &matrix_1);
     s21_create_matrix(2, 2, &matrix_2);
 
+    printf("%d", s21_eq_matrix(&matrix_1, &matrix_2));
+
     s21_remove_matrix(&matrix_1);
     s21_remove_matrix(&matrix_2);
 }
