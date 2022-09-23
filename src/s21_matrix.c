@@ -4,18 +4,40 @@
 int main() {
     matrix_t matrix_1;
     matrix_t matrix_2;
+    matrix_t result;
 
     s21_create_matrix(2, 2, &matrix_1);
     s21_create_matrix(2, 2, &matrix_2);
 
-    printf("%d", s21_eq_matrix(&matrix_1, &matrix_2));
+    for (int i = 0; i < matrix_1.rows; i++) {
+        for (int j = 0; j < matrix_1.columns; j++) {
+            matrix_1.matrix[i][j] = 2;
+        }
+    }
+    printf("matrix_1: \n");
+    print_matrix(&matrix_1);
+
+
+    for (int i = 0; i < matrix_2.rows; i++) {
+        for (int j = 0; j < matrix_2.columns; j++) {
+            matrix_2.matrix[i][j] = 2;
+        }
+    }
+    printf("\nmatrix_2: \n");
+    print_matrix(&matrix_2);
+
+    printf("\ns21_eq_matrix: %d\n", s21_eq_matrix(&matrix_1, &matrix_2));
+    printf("s21_sum_matrix: %d\n", s21_sum_matrix(&matrix_1, &matrix_2, &result));
+    printf("result: \n");
+    print_matrix(&matrix_2);
+
 
     s21_remove_matrix(&matrix_1);
     s21_remove_matrix(&matrix_2);
 }
 
 
-static double **memory_allocation(int rows, int columns) {
+double **memory_allocation(int rows, int columns) {
     double **arr = (double**) malloc(rows * sizeof(double*));
 
     for (int i = 0; i < rows; i++) {
@@ -26,10 +48,20 @@ static double **memory_allocation(int rows, int columns) {
 }
 
 
-static int size_is_eq(matrix_t *A, matrix_t *B) {
+int size_is_eq(matrix_t *A, matrix_t *B) {
     // Возвращает 1, если размеры матриц одинаковы, иначе - 0
 
     return (A->columns == B->columns && A->rows == B->rows);
+}
+
+
+void print_matrix(matrix_t *A) {
+    for (int i = 0; i < A->rows; i++) {
+        for (int j = 0; j < A->columns; j++) {
+            printf("%d ", A->matrix[i][j]);
+        }
+        printf("\n");
+    }
 }
 
 
@@ -53,6 +85,7 @@ int s21_create_matrix(int rows, int columns, matrix_t *result) {
     return res;
 }
 
+
 void s21_remove_matrix(matrix_t *A) {
     if (A->matrix) {
         for(int i = 0; i < A->rows; i++) {
@@ -61,7 +94,6 @@ void s21_remove_matrix(matrix_t *A) {
     }
     free(A->matrix);
 }
-
 
 
 
@@ -83,49 +115,51 @@ int s21_eq_matrix(matrix_t *A, matrix_t *B) {
     return res;
 }
 
-// static int calc_sum_sub(matrix_t *A, matrix_t *B, matrix_t *result, int factor) {
-//     // Вычисление суммы и разности, для разности знак меняется с помощью множителя factor
 
-//     int res = CALC_ERROR;
+static int calc_sum_sub(matrix_t *A, matrix_t *B, matrix_t *result, int factor) {
+    // Вычисление суммы и разности, для разности знак меняется с помощью множителя factor
 
-//     *result = init_struct();
-//     if (size_is_eq(&A, &B)) {
-//         int rows = A->rows, columns = A->columns;
-//         for (int i = 0; i < rows; i++) {
-//             for (int j = 0; j < columns; j++) {
-//                 result->matrix[i][j] = A->matrix[i][j] + (B->matrix[i][j] * factor);
-//             }
-//         }
-//         res = OK;
-//     }
+    int res = CALC_ERROR;
 
-//     return res;
-// }
+    if (size_is_eq(A, B)) {
+        int rows = A->rows, columns = A->columns;
+        s21_create_matrix(rows, columns, result);
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                result->matrix[i][j] = A->matrix[i][j] + (B->matrix[i][j] * factor);
+            }
+        }
+        res = OK;
+    }
 
-
-// int s21_sum_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
-//     return calc_sum_sub(&A, &B, &result, 1);
-// }
+    return res;
+}
 
 
-// int s21_sub_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
-//     return calc_sum_sub(&A, &B, &result, -1);
-// }
+int s21_sum_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
+    return calc_sum_sub(A, B, result, 1);
+}
 
-// int s21_mult_number(matrix_t *A, double number, matrix_t *result) {
-//     // Умножение матрицы на число
 
-//     int res = CALC_ERROR;
+int s21_sub_matrix(matrix_t *A, matrix_t *B, matrix_t *result) {
+    return calc_sum_sub(A, B, result, -1);
+}
 
-//     *result = init_struct();
-//     if (A->matrix != NULL) {
-//         for (int i = 0; i < A->rows; i++) {
-//             for (int j = 0; j < A->columns; j++) {
-//             result->matrix[i][j] = A->matrix[i][j] * number;
-//             }
-//         }
-//         res = OK;
-//     }
 
-//     return res;
-// }
+int s21_mult_number(matrix_t *A, double number, matrix_t *result) {
+    // Умножение матрицы на число
+
+    int res = CALC_ERROR;
+
+    if (A->matrix != NULL) {
+        s21_create_matrix(A->rows, A->columns, result);
+        for (int i = 0; i < A->rows; i++) {
+            for (int j = 0; j < A->columns; j++) {
+            result->matrix[i][j] = A->matrix[i][j] * number;
+            }
+        }
+        res = OK;
+    }
+
+    return res;
+}
