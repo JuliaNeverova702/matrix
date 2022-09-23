@@ -30,8 +30,10 @@ int s21_calc_complements(matrix_t *A, matrix_t *result);
 int s21_determinant(matrix_t *A, double *result);
 int s21_inverse_matrix(matrix_t *A, matrix_t *result);
 
-
-
 void print_matrix(matrix_t *A);
-int size_is_eq(matrix_t *A, matrix_t *B);
+
 double **memory_allocation(int rows, int columns);
+int calc_sum_sub(matrix_t *A, matrix_t *B, matrix_t *result, int factor);
+int size_is_eq(matrix_t *A, matrix_t *B);
+int matrix_is_exist(matrix_t *A);
+int matrices_exist_and_eq(matrix_t *A, matrix_t *B);
