@@ -11,7 +11,7 @@ int main() {
 
     for (int i = 0; i < matrix_1.rows; i++) {
         for (int j = 0; j < matrix_1.columns; j++) {
-            matrix_1.matrix[i][j] = 2;
+            matrix_1.matrix[i][j] = 2.000006;
         }
     }
     printf("matrix_1: \n");
@@ -27,13 +27,17 @@ int main() {
     print_matrix(&matrix_2);
 
     printf("\ns21_eq_matrix: %d\n", s21_eq_matrix(&matrix_1, &matrix_2));
-    printf("s21_sum_matrix: %d\n", s21_sum_matrix(&matrix_1, &matrix_2, &result));
+    printf("\ns21_sum_matrix: %d\n", s21_sum_matrix(&matrix_1, &matrix_2, &result));
     printf("result: \n");
-    print_matrix(&matrix_2);
+    print_matrix(&result);
+    printf("\ns21_sub_matrix: %d\n", s21_sub_matrix(&matrix_1, &matrix_2, &result));
+    printf("result: \n");
+    print_matrix(&result);
 
 
     s21_remove_matrix(&matrix_1);
     s21_remove_matrix(&matrix_2);
+    // s21_remove_matrix(&result);
 }
 
 
@@ -58,7 +62,7 @@ int size_is_eq(matrix_t *A, matrix_t *B) {
 void print_matrix(matrix_t *A) {
     for (int i = 0; i < A->rows; i++) {
         for (int j = 0; j < A->columns; j++) {
-            printf("%d ", A->matrix[i][j]);
+            printf("%lf ", A->matrix[i][j]);
         }
         printf("\n");
     }
@@ -107,7 +111,7 @@ int s21_eq_matrix(matrix_t *A, matrix_t *B) {
         int rows = A->rows, columns = A->columns;
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
-                res = A->matrix[i][j] == B->matrix[i][j] ? SUCCESS : FAILURE;
+                res = (fabs(A->matrix[i][j] - B->matrix[i][j]) <= EPS) ? SUCCESS : FAILURE;
             }
         }
     }

@@ -9,6 +9,8 @@
 #define INCORR_MATRIX 1
 #define CALC_ERROR 2
 
+#define EPS 1e-6
+
 
 typedef struct matrix_struct {
     double** matrix;
