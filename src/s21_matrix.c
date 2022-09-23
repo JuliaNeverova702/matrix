@@ -26,11 +26,18 @@ int main() {
     printf("\nmatrix_2: \n");
     print_matrix(&matrix_2);
 
+    // TEST
     printf("\ns21_eq_matrix: %d\n", s21_eq_matrix(&matrix_1, &matrix_2));
+
     printf("\ns21_sum_matrix: %d\n", s21_sum_matrix(&matrix_1, &matrix_2, &result));
     printf("result: \n");
     print_matrix(&result);
+
     printf("\ns21_sub_matrix: %d\n", s21_sub_matrix(&matrix_1, &matrix_2, &result));
+    printf("result: \n");
+    print_matrix(&result);
+
+    printf("\ns21_mult_number: %d\n", s21_mult_number(&matrix_1, 2, &result));
     printf("result: \n");
     print_matrix(&result);
 
@@ -108,9 +115,8 @@ int s21_eq_matrix(matrix_t *A, matrix_t *B) {
     int res = FAILURE;
 
     if (size_is_eq(A, B)) {
-        int rows = A->rows, columns = A->columns;
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < columns; j++) {
+        for (int i = 0; i < A->rows; i++) {
+            for (int j = 0; j < A->columns; j++) {
                 res = (fabs(A->matrix[i][j] - B->matrix[i][j]) <= EPS) ? SUCCESS : FAILURE;
             }
         }
