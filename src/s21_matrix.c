@@ -196,9 +196,25 @@ int s21_mult_number(matrix_t *A, double number, matrix_t *result) {
 }
 
 
-// int s21_mult_matrix(matrix_t *A, matrix_t *B, matrix_t *result){
+int matrices_can_mul(matrix_t *A, matrix_t *B) {
+    return matrix_is_exist(A) && matrix_is_exist(B) && A->columns == B->rows;
+}
 
-// }
+
+int s21_mult_matrix(matrix_t *A, matrix_t *B, matrix_t *result){
+    int res = CALC_ERROR;
+
+    if (matrices_can_mul(A, B)) {
+        s21_create_matrix(A->rows, B->columns, result);
+            for (int i = 0; i < A->rows; i++) {
+                for (int j = 0; j < B->columns; j++) {
+                    
+                }
+            }
+    }
+
+    return res;
+}
 
 
 int s21_transpose(matrix_t *A, matrix_t *result) {
