@@ -5,7 +5,7 @@ int main() {
     matrix_t matrix_1;
     matrix_t matrix_2;
     matrix_t result;
-    int n = 1;
+    int n = 1, m = 1;
 
     s21_create_matrix(2, 3, &matrix_1);
     s21_create_matrix(3, 2, &matrix_2);
@@ -22,7 +22,8 @@ int main() {
 
     for (int i = 0; i < matrix_2.rows; i++) {
         for (int j = 0; j < matrix_2.columns; j++) {
-            matrix_2.matrix[i][j] = 2;
+            matrix_2.matrix[i][j] = m;
+            m++;
         }
     }
     printf("\nmatrix_2: \n");
@@ -54,6 +55,7 @@ int main() {
     // print_matrix(&result);
 
     // mult
+    s21_mult_matrix(&matrix_1, &matrix_2, &result);
     printf("\ns21_mult_matrix: %d\n", s21_mult_matrix(&matrix_1, &matrix_2, &result));
     printf("result: \n");
     print_matrix(&result);
@@ -131,8 +133,6 @@ int size_is_eq(matrix_t *A, matrix_t *B) {
 
 
 int matrices_exist_and_eq(matrix_t *A, matrix_t *B) {
-    // Возвращает 1, если матрицы существуют и их размеры равны
-
     return matrix_is_exist(A) && matrix_is_exist(B) && size_is_eq(A, B);
 }
 
@@ -167,15 +167,19 @@ int calc_sum_sub(matrix_t *A, matrix_t *B, matrix_t *result, int factor) {
 
     int res = CALC_ERROR;
 
-    if (matrices_exist_and_eq(A, B)) {
-        int rows = A->rows, columns = A->columns;
-        s21_create_matrix(rows, columns, result);
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < columns; j++) {
-                result->matrix[i][j] = A->matrix[i][j] + (B->matrix[i][j] * factor);
+    if (matrix_is_exist(A) && matrix_is_exist(B)) {
+        if (size_is_eq(A, B)) {
+            int rows = A->rows, columns = A->columns;
+            s21_create_matrix(rows, columns, result);
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < columns; j++) {
+                    result->matrix[i][j] = A->matrix[i][j] + (B->matrix[i][j] * factor);
+                }
             }
+            res = OK;
         }
-        res = OK;
+    } else {
+        res = INCORR_MATRIX;
     }
 
     return res;
@@ -195,35 +199,39 @@ int s21_mult_number(matrix_t *A, double number, matrix_t *result) {
             }
         }
         res = OK;
+    } else {
+        res = INCORR_MATRIX;
     }
 
     return res;
-}
-
-
-int matrices_can_mul(matrix_t *A, matrix_t *B) {
-    return matrix_is_exist(A) && matrix_is_exist(B) && A->columns == B->rows;
 }
 
 
 int s21_mult_matrix(matrix_t *A, matrix_t *B, matrix_t *result){
     int res = CALC_ERROR;
 
-    if (matrices_can_mul(A, B)) {
-        s21_create_matrix(A->rows, B->columns, result);
-            for (int i = 0; i < result->rows; i++) {
-                for (int j = 0; j < result->columns; j++) {
-                    for (int n = 0; n < A->rows - 1; n++) {
-                        for (int m = 0; m < B->columns - 1; m++) {
-                            result->matrix[i][j] = A->matrix[m][n] * B->matrix[m][n] + A->matrix[m][n+1] * B->matrix[m+1][n];
-                            // break;
-                        }
-                    }
-                }
-            }
+    if (matrix_is_exist(A) && matrix_is_exist(B)) {
+        if (A->columns == B->rows) {
+            res = OK;
+            mult_matrix(A, B, result);
+        }
+    } else {
+        res = INCORR_MATRIX;
     }
 
     return res;
+}
+
+
+void mult_matrix(matrix_t *A, matrix_t *B, matrix_t *result){
+    s21_create_matrix(A->rows, B->columns, result);
+    for (int i = 0; i < A->rows; i++) {
+        for (int j = 0; j < B->columns; j++) {
+            for (int m = 0; m < A->columns; m++) {
+                result->matrix[i][j] += A->matrix[i][m] * B->matrix[m][j];
+            }
+        }
+    }
 }
 
 
@@ -242,11 +250,4 @@ int s21_transpose(matrix_t *A, matrix_t *result) {
 
     return res;
 }
-
-
-// int s21_calc_complements(matrix_t *A, matrix_t *result);
-// int s21_determinant(matrix_t *A, double *result);
-// int s21_inverse_matrix(matrix_t *A, matrix_t *result);
-
-
 

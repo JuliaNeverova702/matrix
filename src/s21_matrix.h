@@ -37,4 +37,4 @@ int calc_sum_sub(matrix_t *A, matrix_t *B, matrix_t *result, int factor);
 int size_is_eq(matrix_t *A, matrix_t *B);
 int matrix_is_exist(matrix_t *A);
 int matrices_exist_and_eq(matrix_t *A, matrix_t *B);
-int matrices_can_mul(matrix_t *A, matrix_t *B);
+void mult_matrix(matrix_t *A, matrix_t *B, matrix_t *result);
