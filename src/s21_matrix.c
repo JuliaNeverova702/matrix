@@ -7,7 +7,7 @@ int main() {
     matrix_t result;
     int n = 1, m = 1;
 
-    s21_create_matrix(2, 3, &matrix_1);
+    s21_create_matrix(5, 5, &matrix_1);
     s21_create_matrix(3, 2, &matrix_2);
 
     for (int i = 0; i < matrix_1.rows; i++) {
@@ -20,46 +20,18 @@ int main() {
     print_matrix(&matrix_1);
 
 
-    for (int i = 0; i < matrix_2.rows; i++) {
-        for (int j = 0; j < matrix_2.columns; j++) {
-            matrix_2.matrix[i][j] = m;
-            m++;
-        }
-    }
-    printf("\nmatrix_2: \n");
-    print_matrix(&matrix_2);
+    // for (int i = 0; i < matrix_2.rows; i++) {
+    //     for (int j = 0; j < matrix_2.columns; j++) {
+    //         matrix_2.matrix[i][j] = m;
+    //         m++;
+    //     }
+    // }
+    // printf("\nmatrix_2: \n");
+    // print_matrix(&matrix_2);
 
-    // TEST
-
-    // // =
-    // printf("\ns21_eq_matrix: %d\n", s21_eq_matrix(&matrix_1, &matrix_2));
-
-    // // +
-    // printf("\ns21_sum_matrix: %d\n", s21_sum_matrix(&matrix_1, &matrix_2, &result));
-    // printf("result: \n");
-    // print_matrix(&result);
-
-    // // -
-    // printf("\ns21_sub_matrix: %d\n", s21_sub_matrix(&matrix_1, &matrix_2, &result));
-    // printf("result: \n");
-    // print_matrix(&result);
-
-    // // * number
-    // printf("\ns21_mult_number: %d\n", s21_mult_number(&matrix_1, 2, &result));
-    // printf("result: \n");
-    // print_matrix(&result);
-
-    // // trans
-    // printf("\ns21_transpose: %d\n", s21_transpose(&matrix_1, &result));
-    // printf("result: \n");
-    // print_matrix(&result);
-
-    // mult
-    s21_mult_matrix(&matrix_1, &matrix_2, &result);
-    printf("\ns21_mult_matrix: %d\n", s21_mult_matrix(&matrix_1, &matrix_2, &result));
-    printf("result: \n");
+    get_mini_matrix(&matrix_1, &result, 1, 1);
+    printf("\nresult: \n");
     print_matrix(&result);
-
 
     s21_remove_matrix(&matrix_1);
     s21_remove_matrix(&matrix_2);
@@ -115,6 +87,8 @@ void s21_remove_matrix(matrix_t *A) {
         }
     }
     free(A->matrix);
+
+    *A = init_struct();
 }
 
 
@@ -251,3 +225,37 @@ int s21_transpose(matrix_t *A, matrix_t *result) {
     return res;
 }
 
+
+int s21_calc_complements(matrix_t *A, matrix_t *result) {
+
+}
+
+
+void get_mini_matrix(matrix_t *A, matrix_t *result, int rows, int columns) {
+    // Функция для получения матрицы с вычеркнутыми строками и столбцами
+
+    int di, dj, ki, kj;
+
+    s21_create_matrix(A->rows - 1, A->columns - 1, result);
+
+    di = 0;
+    for (int i = 0; i < result->rows; i++) {
+        for (int j = 0; j < result->columns; j++) {
+            // printf("result->rows = %d result->columns = %d\n", i, j);
+            if (result->rows == rows) {
+                di = 1;
+            }
+            result->matrix[i][j] = A->matrix[i][j];
+        }
+    }
+}
+
+int second_order_determinant(matrix_t *A) {
+    // Определитель второго порядка (на вход матрица 2х2)
+
+    return A->matrix[1][1] * A->matrix[2][2] - A->matrix[1][2] * A->matrix[2][1];
+}
+
+
+// 2. Создание матрицы миноров 
+// 3. Создание матрицы дополнений
