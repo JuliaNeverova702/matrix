@@ -8,7 +8,7 @@ int main() {
     int n = 1;
 
     s21_create_matrix(2, 3, &matrix_1);
-    s21_create_matrix(2, 2, &matrix_2);
+    s21_create_matrix(3, 2, &matrix_2);
 
     for (int i = 0; i < matrix_1.rows; i++) {
         for (int j = 0; j < matrix_1.columns; j++) {
@@ -48,8 +48,13 @@ int main() {
     // printf("result: \n");
     // print_matrix(&result);
 
-    // trans
-    printf("\ns21_transpose: %d\n", s21_transpose(&matrix_1, &result));
+    // // trans
+    // printf("\ns21_transpose: %d\n", s21_transpose(&matrix_1, &result));
+    // printf("result: \n");
+    // print_matrix(&result);
+
+    // mult
+    printf("\ns21_mult_matrix: %d\n", s21_mult_matrix(&matrix_1, &matrix_2, &result));
     printf("result: \n");
     print_matrix(&result);
 
@@ -206,9 +211,14 @@ int s21_mult_matrix(matrix_t *A, matrix_t *B, matrix_t *result){
 
     if (matrices_can_mul(A, B)) {
         s21_create_matrix(A->rows, B->columns, result);
-            for (int i = 0; i < A->rows; i++) {
-                for (int j = 0; j < B->columns; j++) {
-                    
+            for (int i = 0; i < result->rows; i++) {
+                for (int j = 0; j < result->columns; j++) {
+                    for (int n = 0; n < A->rows - 1; n++) {
+                        for (int m = 0; m < B->columns - 1; m++) {
+                            result->matrix[i][j] = A->matrix[m][n] * B->matrix[m][n] + A->matrix[m][n+1] * B->matrix[m+1][n];
+                            // break;
+                        }
+                    }
                 }
             }
     }
