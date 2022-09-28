@@ -7,7 +7,7 @@ int main() {
     matrix_t result;
     int n = 1, m = 1;
 
-    s21_create_matrix(5, 5, &matrix_1);
+    s21_create_matrix(2, 2, &matrix_1);
     s21_create_matrix(3, 2, &matrix_2);
 
     for (int i = 0; i < matrix_1.rows; i++) {
@@ -29,9 +29,12 @@ int main() {
     // printf("\nmatrix_2: \n");
     // print_matrix(&matrix_2);
 
-    get_mini_matrix(&matrix_1, &result, 1, 1);
-    printf("\nresult: \n");
-    print_matrix(&result);
+    double res;
+
+    s21_determinant(&matrix_1, &res);
+    printf("%lf", res);
+    // printf("\nres: \n");
+    // print_matrix(&result);
 
     s21_remove_matrix(&matrix_1);
     s21_remove_matrix(&matrix_2);
@@ -270,7 +273,7 @@ int matrix_is_square(matrix_t *A) {
 void matrix_of_minors(matrix_t *A, matrix_t *result) {
         for (int i = 0; i < A->rows; i++) {
             for (int j = 0; j < A->columns; j++) {
-                get_mini_matrix(A, )
+                // get_mini_matrix(A, )
             }
         }
     
@@ -278,5 +281,35 @@ void matrix_of_minors(matrix_t *A, matrix_t *result) {
 
 
 int s21_determinant(matrix_t *A, double *result) {
-    if (matrix_is_square) {
+    int res = CALC_ERROR;
+
+    if (matrix_is_square(A)) {
+        *result = calc_determinant(A, A->columns);
+        res = OK;
+    } else {
+        res = INCORR_MATRIX;
+    }
+
+    return res;
+}
+
+
+double calc_determinant (matrix_t *A, int size) {
+    int det = 0, degree = 1;
+    matrix_t mini_matrix; 
+
+    if (size == 1) {
+        det = A->matrix[0][0];
+    } else if (size == 2) {
+        det = second_order_determinant(A);
+    } else {
+        for (int col = 0; col < size; col++) {
+            get_mini_matrix(A, &mini_matrix, 0, col);
+            det = det + (degree * A->matrix[0][col] * calc_determinant(&mini_matrix, size - 1));
+            degree = -degree;
+        }
+        s21_remove_matrix(&mini_matrix);
+    }
+
+    return det;
 }
