@@ -231,24 +231,27 @@ int s21_calc_complements(matrix_t *A, matrix_t *result) {
 }
 
 
-void get_mini_matrix(matrix_t *A, matrix_t *result, int rows, int columns) {
+void get_mini_matrix(matrix_t *A, matrix_t *result, int row, int column) {
     // Функция для получения матрицы с вычеркнутыми строками и столбцами
 
-    int di, dj, ki, kj;
+    int offset_row = 0, offset_col = 0;
 
     s21_create_matrix(A->rows - 1, A->columns - 1, result);
 
-    di = 0;
     for (int i = 0; i < result->rows; i++) {
+        if (i == row) {
+            offset_row = 1;
+        }
+        offset_col = 0;
         for (int j = 0; j < result->columns; j++) {
-            // printf("result->rows = %d result->columns = %d\n", i, j);
-            if (result->rows == rows) {
-                di = 1;
+            if (j == column) {
+                offset_col = 1;
             }
-            result->matrix[i][j] = A->matrix[i][j];
+            result->matrix[i][j] = A->matrix[i + offset_row][j + offset_col];
         }
     }
 }
+
 
 int second_order_determinant(matrix_t *A) {
     // Определитель второго порядка (на вход матрица 2х2)
@@ -257,5 +260,23 @@ int second_order_determinant(matrix_t *A) {
 }
 
 
-// 2. Создание матрицы миноров 
-// 3. Создание матрицы дополнений
+int matrix_is_square(matrix_t *A) {
+    //  Возвращает 1, если матрциа квадратная и существует
+
+    return matrix_is_exist(A) && A->columns == A->columns;
+}
+
+
+void matrix_of_minors(matrix_t *A, matrix_t *result) {
+        for (int i = 0; i < A->rows; i++) {
+            for (int j = 0; j < A->columns; j++) {
+                get_mini_matrix(A, )
+            }
+        }
+    
+}
+
+
+int s21_determinant(matrix_t *A, double *result) {
+    if (matrix_is_square) {
+}
