@@ -7,15 +7,20 @@ int main() {
     matrix_t result;
     int n = 1, m = 1;
 
-    s21_create_matrix(2, 2, &matrix_1);
+    s21_create_matrix(3, 3, &matrix_1);
     s21_create_matrix(3, 2, &matrix_2);
 
-    for (int i = 0; i < matrix_1.rows; i++) {
-        for (int j = 0; j < matrix_1.columns; j++) {
-            matrix_1.matrix[i][j] = n;
-            n++;
-        }
-    }
+    // for (int i = 0; i < matrix_1.rows; i++) {
+    //     for (int j = 0; j < matrix_1.columns; j++) {
+    //         matrix_1.matrix[i][j] = ;
+    //         n++;
+    //     }
+    // }
+
+    matrix_1.matrix[0][0] = 1; matrix_1.matrix[0][1] = 2; matrix_1.matrix[0][2] = 3; 
+    matrix_1.matrix[1][0] = 0; matrix_1.matrix[1][1] = 4; matrix_1.matrix[1][2] = 2; 
+    matrix_1.matrix[2][0] = 5; matrix_1.matrix[2][1] = 2; matrix_1.matrix[2][2] = 1; 
+
     printf("matrix_1: \n");
     print_matrix(&matrix_1);
 
@@ -29,12 +34,9 @@ int main() {
     // printf("\nmatrix_2: \n");
     // print_matrix(&matrix_2);
 
-    double res;
-
-    s21_determinant(&matrix_1, &res);
-    printf("%lf", res);
-    // printf("\nres: \n");
-    // print_matrix(&result);
+    s21_calc_complements(&matrix_1, &result);
+    printf("\n");
+    print_matrix(&result);
 
     s21_remove_matrix(&matrix_1);
     s21_remove_matrix(&matrix_2);
@@ -231,6 +233,25 @@ int s21_transpose(matrix_t *A, matrix_t *result) {
 
 int s21_calc_complements(matrix_t *A, matrix_t *result) {
 
+    int res = CALC_ERROR;
+    matrix_t mini_matrix;
+
+    if (matrix_is_square_and_exist(A)) {
+        res = OK;
+        s21_create_matrix(A->rows, A->columns, result);
+        for (int i = 0; i < A->rows; i++) {
+            for (int j = 0; j < A->columns; j++) {
+                get_mini_matrix(A, &mini_matrix, i, j);
+                s21_determinant(&mini_matrix, &result->matrix[i][j]);
+                result->matrix[i][j] = result->matrix[i][j] * pow(-1, i + j);
+                s21_remove_matrix(&mini_matrix);
+            }
+        }
+    } else {
+        res = INCORR_MATRIX;
+    }
+
+    return res;
 }
 
 
@@ -256,34 +277,24 @@ void get_mini_matrix(matrix_t *A, matrix_t *result, int row, int column) {
 }
 
 
-int second_order_determinant(matrix_t *A) {
+double second_order_determinant(matrix_t *A) {
     // Определитель второго порядка (на вход матрица 2х2)
-
-    return A->matrix[1][1] * A->matrix[2][2] - A->matrix[1][2] * A->matrix[2][1];
+    // printf("\n%lf * %lf - %lf * %lf\n", A->matrix[0][0], A->matrix[1][1], A->matrix[0][1], A->matrix[1][0]);
+    return A->matrix[0][0] * A->matrix[1][1] - A->matrix[0][1] * A->matrix[1][0];
 }
 
 
-int matrix_is_square(matrix_t *A) {
+int matrix_is_square_and_exist(matrix_t *A) {
     //  Возвращает 1, если матрциа квадратная и существует
 
     return matrix_is_exist(A) && A->columns == A->columns;
 }
 
 
-void matrix_of_minors(matrix_t *A, matrix_t *result) {
-        for (int i = 0; i < A->rows; i++) {
-            for (int j = 0; j < A->columns; j++) {
-                // get_mini_matrix(A, )
-            }
-        }
-    
-}
-
-
 int s21_determinant(matrix_t *A, double *result) {
     int res = CALC_ERROR;
 
-    if (matrix_is_square(A)) {
+    if (matrix_is_square_and_exist(A)) {
         *result = calc_determinant(A, A->columns);
         res = OK;
     } else {
@@ -295,7 +306,8 @@ int s21_determinant(matrix_t *A, double *result) {
 
 
 double calc_determinant (matrix_t *A, int size) {
-    int det = 0, degree = 1;
+    double det = 0;
+    int degree = 1;
     matrix_t mini_matrix; 
 
     if (size == 1) {
