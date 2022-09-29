@@ -9,7 +9,7 @@
 #define INCORR_MATRIX 1
 #define CALC_ERROR 2
 
-#define EPS 1e-6
+#define EPS 1e-7
 
 
 typedef struct matrix_struct {
@@ -40,6 +40,7 @@ int matrices_exist_and_eq(matrix_t *A, matrix_t *B);
 void mult_matrix(matrix_t *A, matrix_t *B, matrix_t *result);
 double second_order_determinant(matrix_t *A);
 void get_mini_matrix(matrix_t *A, matrix_t *result, int row, int column);
-int matrix_is_square_and_exist(matrix_t *A);
+int matrix_is_square(matrix_t *A);
 double calc_determinant (matrix_t *A, int size);
+void calc_complements(matrix_t *A, matrix_t *result);
 
