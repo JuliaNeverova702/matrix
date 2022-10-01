@@ -1,46 +1,48 @@
 #include "s21_matrix.h"
 
 
-// int main() {
-//     matrix_t matrix_1;
-//     matrix_t matrix_2;
-//     matrix_t result;
+int main() {
+    matrix_t A;
+    s21_create_matrix(3, 3, &A);
+    matrix_t C;
+    s21_create_matrix(3, 3, &C);
+    A.matrix[0][0] = -1;
+    A.matrix[0][1] = 2;
+    A.matrix[0][2] = -2;
 
-//     s21_create_matrix(3, 3, &matrix_1);
-//     s21_create_matrix(3, 2, &matrix_2);
+    A.matrix[1][0] = 2;
+    A.matrix[1][1] = -1;
+    A.matrix[1][2] = 5;
 
-//     // for (int i = 0; i < matrix_1.rows; i++) {
-//     //     for (int j = 0; j < matrix_1.columns; j++) {
-//     //         matrix_1.matrix[i][j] = ;
-//     //         n++;
-//     //     }
-//     // }
-
-//     matrix_1.matrix[0][0] = 2; matrix_1.matrix[0][1] = 5; matrix_1.matrix[0][2] = 7; 
-//     matrix_1.matrix[1][0] = 6; matrix_1.matrix[1][1] = 3; matrix_1.matrix[1][2] = 4; 
-//     matrix_1.matrix[2][0] = 5; matrix_1.matrix[2][1] = -2; matrix_1.matrix[2][2] = -3; 
-
-//     printf("matrix_1: \n");
-//     print_matrix(&matrix_1);
+    A.matrix[2][0] = 3;
+    A.matrix[2][1] = -2;
+    A.matrix[2][2] = 4;
 
 
-//     // for (int i = 0; i < matrix_2.rows; i++) {
-//     //     for (int j = 0; j < matrix_2.columns; j++) {
-//     //         matrix_2.matrix[i][j] = m;
-//     //         m++;
-//     //     }
-//     // }
-//     // printf("\nmatrix_2: \n");
-//     // print_matrix(&matrix_2);
+    C.matrix[0][0] = 0.6;
+    C.matrix[0][1] = -0.4;
+    C.matrix[0][2] = 0.8;
 
-//     s21_inverse_matrix(&matrix_1, &result);
-//     printf("\n");
-//     print_matrix(&result);
+    C.matrix[1][0] = 0.7;
+    C.matrix[1][1] = 0.2;
+    C.matrix[1][2] = 0.1;
 
-//     s21_remove_matrix(&matrix_1);
-//     s21_remove_matrix(&matrix_2);
-//     // s21_remove_matrix(&result);
-// }
+    C.matrix[2][0] = -0.1;
+    C.matrix[2][1] = 0.4;
+    C.matrix[2][2] = -0.3;
+    matrix_t my;
+    s21_inverse_matrix(&A, &my);
+    print_matrix(&C);
+    printf("\n");
+    print_matrix(&my);
+    int result = s21_eq_matrix(&my, &C);
+    printf("\nresult: %d", result);
+    // ck_assert_int_eq(result, 1);
+    s21_remove_matrix(&A);
+    s21_remove_matrix(&C);
+    s21_remove_matrix(&my);
+}
+
 
 void print_matrix(matrix_t *A) {
     for (int i = 0; i < A->rows; i++) {
@@ -153,6 +155,7 @@ int calc_sum_sub(matrix_t *A, matrix_t *B, matrix_t *result, int factor) {
     // Вычисление суммы и разности, для разности знак меняется с помощью множителя factor
 
     int res = CALC_ERROR;
+    *result = init_struct();
 
     if (matrix_is_exist(A) && matrix_is_exist(B)) {
         if (size_is_eq(A, B)) {
@@ -177,6 +180,7 @@ int s21_mult_number(matrix_t *A, double number, matrix_t *result) {
     // Умножение матрицы на число
 
     int res = CALC_ERROR;
+    *result = init_struct();
 
     if (matrix_is_exist(A)) {
         s21_create_matrix(A->rows, A->columns, result);
@@ -196,6 +200,7 @@ int s21_mult_number(matrix_t *A, double number, matrix_t *result) {
 
 int s21_mult_matrix(matrix_t *A, matrix_t *B, matrix_t *result){
     int res = CALC_ERROR;
+    *result = init_struct();
 
     if (matrix_is_exist(A) && matrix_is_exist(B)) {
         if (A->columns == B->rows) {
@@ -224,6 +229,7 @@ void mult_matrix(matrix_t *A, matrix_t *B, matrix_t *result){
 
 int s21_transpose(matrix_t *A, matrix_t *result) {
     int res = CALC_ERROR;
+    *result = init_struct();
 
     if (matrix_is_exist(A)) {
         s21_create_matrix(A->columns, A->rows, result);
@@ -242,13 +248,18 @@ int s21_transpose(matrix_t *A, matrix_t *result) {
 
 
 int s21_calc_complements(matrix_t *A, matrix_t *result) {
-
     int res = CALC_ERROR;
+    *result = init_struct();
 
     if (matrix_is_exist(A)) {
         if (matrix_is_square(A)) {
-            res = OK;
-            calc_complements(A, result);
+            if (!s21_create_matrix(A->rows, A->columns, result)) {
+                res = OK;
+                calc_complements(A, result);
+                if (A->rows == 1) {
+                    result->matrix[0][0] = 1.;
+                }
+            }
         }
     } else {
         res = INCORR_MATRIX;
@@ -260,8 +271,7 @@ int s21_calc_complements(matrix_t *A, matrix_t *result) {
 
 void calc_complements(matrix_t *A, matrix_t *result) {
     matrix_t mini_matrix;
-    
-    s21_create_matrix(A->rows, A->columns, result);
+
     for (int i = 0; i < A->rows; i++) {
         for (int j = 0; j < A->columns; j++) {
             get_mini_matrix(A, &mini_matrix, i, j);
@@ -311,6 +321,7 @@ int matrix_is_square(matrix_t *A) {
 
 int s21_determinant(matrix_t *A, double *result) {
     int res = CALC_ERROR;
+    *result = 0;
 
     if (matrix_is_exist(A)) {
         if (matrix_is_square(A)) {
@@ -328,7 +339,7 @@ int s21_determinant(matrix_t *A, double *result) {
 double calc_determinant (matrix_t *A, int size) {
     double det = 0;
     int degree = 1;
-    matrix_t mini_matrix; 
+    matrix_t mini_matrix = init_struct(); 
 
     if (size == 1) {
         det = A->matrix[0][0];
@@ -351,6 +362,7 @@ int s21_inverse_matrix(matrix_t *A, matrix_t *result) {
     int res = CALC_ERROR;
     double det = 0;
     matrix_t tmp;
+    *result = init_struct();
 
     if (matrix_is_exist(A)) {
         s21_determinant(A, &det);
@@ -358,6 +370,9 @@ int s21_inverse_matrix(matrix_t *A, matrix_t *result) {
             res = OK;
             s21_calc_complements(A, &tmp);
             s21_transpose(&tmp, result);
+            if (A->rows == 1) {
+                result->matrix[0][0] = 1.0 / A->matrix[0][0];
+            }
         }
     } else {
         res = INCORR_MATRIX;

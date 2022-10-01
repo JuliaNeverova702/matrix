@@ -636,8 +636,8 @@ START_TEST(s21_determinant_test_2) {
     A.matrix[2][0] = 7;
     A.matrix[2][1] = 8;
     double result;
-    s21_determinant(&A, &result);
-    ck_assert(result != result);
+    int error = s21_determinant(&A, &result);
+    ck_assert(error == CALC_ERROR);
     s21_remove_matrix(&A);
 }
 END_TEST
@@ -1005,7 +1005,7 @@ START_TEST(test_inverse_2) {
     test = s21_inverse_matrix(&A, &B);
     ck_assert_int_eq(test, OK);
     // printf("%lf\n", B.matrix[0][0]);
-    // ck_assert_float_eq(B.matrix[0][0], 0.2);
+    ck_assert_double_eq(B.matrix[0][0], 0.2);
     s21_remove_matrix(&A);
     s21_remove_matrix(&B);
 
