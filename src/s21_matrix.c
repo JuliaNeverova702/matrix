@@ -1,49 +1,5 @@
 #include "s21_matrix.h"
 
-
-int main() {
-    matrix_t A;
-    s21_create_matrix(3, 3, &A);
-    matrix_t C;
-    s21_create_matrix(3, 3, &C);
-    A.matrix[0][0] = -1;
-    A.matrix[0][1] = 2;
-    A.matrix[0][2] = -2;
-
-    A.matrix[1][0] = 2;
-    A.matrix[1][1] = -1;
-    A.matrix[1][2] = 5;
-
-    A.matrix[2][0] = 3;
-    A.matrix[2][1] = -2;
-    A.matrix[2][2] = 4;
-
-
-    C.matrix[0][0] = 0.6;
-    C.matrix[0][1] = -0.4;
-    C.matrix[0][2] = 0.8;
-
-    C.matrix[1][0] = 0.7;
-    C.matrix[1][1] = 0.2;
-    C.matrix[1][2] = 0.1;
-
-    C.matrix[2][0] = -0.1;
-    C.matrix[2][1] = 0.4;
-    C.matrix[2][2] = -0.3;
-    matrix_t my;
-    s21_inverse_matrix(&A, &my);
-    print_matrix(&C);
-    printf("\n");
-    print_matrix(&my);
-    int result = s21_eq_matrix(&my, &C);
-    printf("\nresult: %d", result);
-    // ck_assert_int_eq(result, 1);
-    s21_remove_matrix(&A);
-    s21_remove_matrix(&C);
-    s21_remove_matrix(&my);
-}
-
-
 void print_matrix(matrix_t *A) {
     for (int i = 0; i < A->rows; i++) {
         for (int j = 0; j < A->columns; j++) {
@@ -362,6 +318,7 @@ int s21_inverse_matrix(matrix_t *A, matrix_t *result) {
     int res = CALC_ERROR;
     double det = 0;
     matrix_t tmp;
+    matrix_t tmp1;
     *result = init_struct();
 
     if (matrix_is_exist(A)) {
@@ -369,10 +326,8 @@ int s21_inverse_matrix(matrix_t *A, matrix_t *result) {
         if (matrix_is_square(A) && det != 0) {
             res = OK;
             s21_calc_complements(A, &tmp);
-            s21_transpose(&tmp, result);
-            if (A->rows == 1) {
-                result->matrix[0][0] = 1.0 / A->matrix[0][0];
-            }
+            s21_transpose(&tmp, &tmp1);
+            s21_mult_number(&tmp1, 1/det, result);
         }
     } else {
         res = INCORR_MATRIX;
