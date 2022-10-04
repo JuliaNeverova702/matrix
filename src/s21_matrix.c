@@ -1,13 +1,14 @@
 #include "s21_matrix.h"
 
-void print_matrix(matrix_t *A) {
-    for (int i = 0; i < A->rows; i++) {
-        for (int j = 0; j < A->columns; j++) {
-            printf("%lf ", A->matrix[i][j]);
-        }
-        printf("\n");
-    }
-}
+
+// void print_matrix(matrix_t *A) {
+//     for (int i = 0; i < A->rows; i++) {
+//         for (int j = 0; j < A->columns; j++) {
+//             printf("%lf ", A->matrix[i][j]);
+//         }
+//         printf("\n");
+//     }
+// }
 
 
 matrix_t init_struct() {
@@ -21,7 +22,10 @@ int s21_create_matrix(int rows, int columns, matrix_t *result) {
     *result = init_struct();
 
     if (rows > 0 && columns > 0) {
-        result->matrix = memory_allocation(rows, columns);
+        result->matrix = (double**) calloc(rows, rows * sizeof(double*));
+        for (int i = 0; i < rows; i++) {
+            result->matrix[i] = (double*)calloc(columns, columns * sizeof(double));
+        }
         if (result->matrix != NULL) {
             result->columns = columns;
             result->rows = rows;
@@ -29,19 +33,7 @@ int s21_create_matrix(int rows, int columns, matrix_t *result) {
         }
     }
 
-
     return res;
-}
-
-
-double **memory_allocation(int rows, int columns) {
-    double **arr = (double**) calloc(rows, rows * sizeof(double*));
-
-    for (int i = 0; i < rows; i++) {
-        arr[i] = (double*)calloc(columns, columns * sizeof(double));
-    }
-
-    return arr;
 }
 
 
@@ -116,13 +108,14 @@ int calc_sum_sub(matrix_t *A, matrix_t *B, matrix_t *result, int factor) {
     if (matrix_is_exist(A) && matrix_is_exist(B)) {
         if (size_is_eq(A, B)) {
             int rows = A->rows, columns = A->columns;
-            s21_create_matrix(rows, columns, result);
-            for (int i = 0; i < rows; i++) {
-                for (int j = 0; j < columns; j++) {
-                    result->matrix[i][j] = A->matrix[i][j] + (B->matrix[i][j] * factor);
-                }
+            if (!s21_create_matrix(rows, columns, result)) {
+                for (int i = 0; i < rows; i++) {
+                    for (int j = 0; j < columns; j++) {
+                        result->matrix[i][j] = A->matrix[i][j] + (B->matrix[i][j] * factor);
+                    }
             }
             res = OK;
+            }
         }
     } else {
         res = INCORR_MATRIX;
@@ -306,8 +299,8 @@ double calc_determinant (matrix_t *A, int size) {
             get_mini_matrix(A, &mini_matrix, 0, col);
             det = det + (degree * A->matrix[0][col] * calc_determinant(&mini_matrix, size - 1));
             degree = -degree;
+            s21_remove_matrix(&mini_matrix);
         }
-        s21_remove_matrix(&mini_matrix);
     }
 
     return det;
@@ -320,6 +313,8 @@ int s21_inverse_matrix(matrix_t *A, matrix_t *result) {
     matrix_t tmp;
     matrix_t tmp1;
     *result = init_struct();
+    tmp = init_struct();
+    tmp1 = init_struct();
 
     if (matrix_is_exist(A)) {
         s21_determinant(A, &det);
@@ -332,6 +327,9 @@ int s21_inverse_matrix(matrix_t *A, matrix_t *result) {
     } else {
         res = INCORR_MATRIX;
     }
+
+    s21_remove_matrix(&tmp);
+    s21_remove_matrix(&tmp1);
 
     return res;
 }
