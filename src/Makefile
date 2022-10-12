@@ -65,7 +65,7 @@ gcov_report: clean
 	genhtml -o $(BUILD_DIR)/report gcov_report.info
 
 # CHECK
-check_all: clean mini_build check
+check_all: clean check
 
 check: clean leaks cppcheck lint
 
